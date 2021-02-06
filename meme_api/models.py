@@ -13,5 +13,5 @@ class Meme(models.Model):
     '''
     name = models.CharField(max_length=200, null=True)
     caption = models.CharField(max_length=200, null=True)
-    url = models.URLField(null=True)
-    date_created= models.DateTimeField(auto_now_add=True)
+    url = models.URLField(null=True, max_length=1000)
+    date_created = models.DateTimeField(auto_now_add=True)
