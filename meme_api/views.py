@@ -58,36 +58,36 @@ class MemeListCreateView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-# class DetailView(APIView):
-#     '''
-#     Class based view to get detail of a meme
-#     with a particular id with get request
-#     and also make changes to it with patch request
-#     '''
+class DetailView(APIView):
+    '''
+    Class based view to get detail of a meme
+    with a particular id with get request
+    and also make changes to it with patch request
+    '''
 
-#     def get_object(self, pk):
-#         # method to check and return
-#         # if a meme with given id exists
-#         try:
-#             return Meme.objects.get(id=pk)
-#         except Meme.DoesNotExist:
-#             raise Http404
+    def get_object(self, pk):
+        # method to check and return
+        # if a meme with given id exists
+        try:
+            return Meme.objects.get(id=pk)
+        except Meme.DoesNotExist:
+            raise Http404
 
-#     def get(self, request, pk):
-#         # method to serve get request with
-#         # info about a meme with given id
-#         meme = self.get_object(pk)
-#         serializer = MemeSerializer(meme)
-#         return Response(serializer.data)
+    def get(self, request, pk):
+        # method to serve get request with
+        # info about a meme with given id
+        meme = self.get_object(pk)
+        serializer = MemeSerializer(meme)
+        return Response(serializer.data)
 
-#     def patch(self, request, pk):
-#         # method to serve patch request
-#         # by updating the contents of meme
-#         # with given id
-#         memetobeupdated = self.get_object(pk)
-#         serializer = MemeSerializer(
-#             memetobeupdated, data=request.data, partial=True)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return Response(status=status.HTTP_202_ACCEPTED)
-#         return Response(status=status.HTTP_404_NOT_FOUND)
+    def patch(self, request, pk):
+        # method to serve patch request
+        # by updating the contents of meme
+        # with given id
+        memetobeupdated = self.get_object(pk)
+        serializer = MemeSerializer(
+            memetobeupdated, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_202_ACCEPTED)
+        return Response(status=status.HTTP_404_NOT_FOUND)
