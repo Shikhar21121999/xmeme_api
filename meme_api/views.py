@@ -38,7 +38,7 @@ class MemeListCreateView(APIView):
 
     def get(self, request, format=None):
         # get latest 1000 memes which have been added to the data base
-        Latest_memes = Meme.objects.order_by('date_created')[:1000]
+        Latest_memes = Meme.objects.order_by('-date_created')[:10]
         serializer = MemeSerializer(Latest_memes, many=True)
         return Response(serializer.data)
 
@@ -80,14 +80,17 @@ class DetailView(APIView):
         serializer = MemeSerializer(meme)
         return Response(serializer.data)
 
-    def patch(self, request, pk):
+    def patch(self, request, pk, format=None):
         # method to serve patch request
         # by updating the contents of meme
         # with given id
         memetobeupdated = self.get_object(pk)
+        print(request.data)
         serializer = MemeSerializer(
-            memetobeupdated, data=request.data, partial=True)
+            memetobeupdated, data=request.data)
         if serializer.is_valid():
+            print("serializer is valid")
             serializer.save()
             return Response(status=status.HTTP_202_ACCEPTED)
+        print("serializer is invalid")
         return Response(status=status.HTTP_404_NOT_FOUND)
