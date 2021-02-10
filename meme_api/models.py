@@ -11,7 +11,7 @@ class Meme(models.Model):
     2) caption for the meme
     3) url for image source
     '''
-    name = models.CharField(max_length=200, null=True)
-    caption = models.CharField(max_length=200, null=True)
-    url = models.URLField(null=True, max_length=1000)
+    name = models.CharField(max_length=200)
+    caption = models.CharField(max_length=200)
+    url = models.CharField(max_length=100000)
     date_created = models.DateTimeField(auto_now_add=True)

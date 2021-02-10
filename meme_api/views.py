@@ -6,27 +6,13 @@ from rest_framework.views import APIView
 from rest_framework.views import Response
 from rest_framework import status
 from django.http import Http404
+from django.conf.urls import url
+from rest_framework_swagger.views import get_swagger_view
 
 '''
 Creating various api_views
 Here we use generic views as provided by django generic classes
 '''
-
-
-class ApiOverview(APIView):
-    '''
-    Api view to display info about all the
-    api endpoints
-    '''
-
-    def get(self, request, format=None):
-        api_urls = {
-            'post a meme': '/memes',
-            'get a list of meme': '/memes',
-            'get a particular id': '/memes/<id>',
-            'update a meme': '/memes/<id>'
-        }
-        return Response(api_urls)
 
 
 class MemeListCreateView(APIView):
@@ -37,24 +23,37 @@ class MemeListCreateView(APIView):
     '''
 
     def get(self, request, format=None):
+        '''
+        get latest 100 memes added to the database
+        '''
         # get latest 1000 memes which have been added to the data base
-        Latest_memes = Meme.objects.order_by('-date_created')[:10]
+        Latest_memes = Meme.objects.order_by('-date_created')[:100]
         serializer = MemeSerializer(Latest_memes, many=True)
         return Response(serializer.data)
 
     def post(self, request, format=None):
+        '''
+        add a new meme to the database
+        '''
         # serialize and validate the data
-        print(request.query_params)
-        print("next is request.data")
-        print(request.data)
         serializer = MemeSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            # retrun id of the created meme as json response
-            mydict = {
-                'id': serializer.data['id']
-            }
-            return Response(mydict, status=status.HTTP_201_CREATED)
+            data = serializer.validated_data
+            dup_obj = Meme.objects.filter(
+                name=data['name'], url=data['url'], caption=data['caption'])
+            if len(dup_obj) == 0:
+                print("good post")
+                serializer.save()
+                # retrun id of the created meme as json response
+                mydict = {
+                    'id': serializer.data['id']
+                }
+                return Response(mydict, status=status.HTTP_201_CREATED)
+            else:
+                resdict = {
+                    'error': 'A meme with exactly same data exist'
+                }
+                return Response(resdict, status=status.HTTP_400_BAD_REQUEST)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -74,6 +73,9 @@ class DetailView(APIView):
             raise Http404
 
     def get(self, request, pk):
+        '''
+        get detail of a particular meme given by id
+        '''
         # method to serve get request with
         # info about a meme with given id
         meme = self.get_object(pk)
@@ -81,6 +83,9 @@ class DetailView(APIView):
         return Response(serializer.data)
 
     def patch(self, request, pk, format=None):
+        '''
+        make changes to an already existing meme via patch
+        '''
         # method to serve patch request
         # by updating the contents of meme
         # with given id
