@@ -92,7 +92,7 @@ class DetailView(APIView):
         memetobeupdated = self.get_object(pk)
         print(request.data)
         serializer = MemeSerializer(
-            memetobeupdated, data=request.data)
+            memetobeupdated, data=request.data, partial=True)
         if serializer.is_valid():
             print("serializer is valid")
             serializer.save()
