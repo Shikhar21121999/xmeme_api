@@ -13,4 +13,4 @@ class MemeSerializer(serializers.ModelSerializer):
         # by the 'position' field. No two items in a given list may share
         # the same position.
         model = Meme
-        fields = ['id', 'name', 'caption', 'url', 'date_created']
+        fields = ['id', 'name', 'caption', 'url']
