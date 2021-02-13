@@ -36,11 +36,16 @@ class MemeListCreateView(APIView):
         add a new meme to the database
         '''
         # serialize and validate the data
+        print('inside post')
         serializer = MemeSerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
+            print('data valid')
             data = serializer.validated_data
+            # print(data)
             dup_obj = Meme.objects.filter(
                 name=data['name'], url=data['url'], caption=data['caption'])
+            print(dup_obj)
             if len(dup_obj) == 0:
                 print("good post")
                 serializer.save()
@@ -94,8 +99,14 @@ class DetailView(APIView):
         serializer = MemeSerializer(
             memetobeupdated, data=request.data, partial=True)
         if serializer.is_valid():
-            print("serializer is valid")
+            # remove name field so that name cannot be updated
+            rem_field = serializer.validated_data.pop('name', None)
             serializer.save()
             return Response(status=status.HTTP_202_ACCEPTED)
         print("serializer is invalid")
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, pk, format=None):
+        meme = self.get_object(pk)
+        meme.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

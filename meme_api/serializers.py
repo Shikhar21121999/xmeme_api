@@ -14,3 +14,8 @@ class MemeSerializer(serializers.ModelSerializer):
         # the same position.
         model = Meme
         fields = ['id', 'name', 'caption', 'url']
+        # read_only_fields = ('is_active', 'is_staff')
+        # read_only_fields = ('name',)
+        # extra_kwargs = {
+        #     'name': {'write_only': True}
+        # }
